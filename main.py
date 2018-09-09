@@ -29,6 +29,7 @@ flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate 
 FLAGS = flags.FLAGS
 
 iS_DEBUG = 0
+# python3 main.py --dataset datasetA1 --input_height=466 --input_width=344 --output_height=466 --output_width=344 --train=True --crop
 
 def main(_):
   pp.pprint(flags.FLAGS.__flags)
