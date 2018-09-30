@@ -1,11 +1,15 @@
-import os
 import scipy.misc
+import os
 import numpy as np
 
-from model import DCGAN
+from ___model_genetic import DCGAN
 from utils import pp, visualize, to_json, show_all_variables
 
 import tensorflow as tf
+
+#use absolute paths
+ABS_PATh = os.path.dirname(os.path.abspath(__file__)) + "/"
+
 
 flags = tf.app.flags
 flags.DEFINE_integer("epoch", 25, "Epoch to train [25]")
@@ -19,17 +23,30 @@ flags.DEFINE_integer("output_height", 64, "The size of the output images to prod
 flags.DEFINE_integer("output_width", None, "The size of the output images to produce. If None, same value as output_height [None]")
 flags.DEFINE_string("dataset", "celebA", "The name of dataset [celebA, mnist, lsun]")
 flags.DEFINE_string("input_fname_pattern", "*.jpg", "Glob pattern of filename of input images [*]")
-flags.DEFINE_string("checkpoint_dir", "checkpoint", "Directory name to save the checkpoints [checkpoint]")
-flags.DEFINE_string("data_dir", "./data", "Root directory of dataset [data]")
-flags.DEFINE_string("sample_dir", "samples", "Directory name to save the image samples [samples]")
+flags.DEFINE_string("checkpoint_dir", ABS_PATh + "checkpoint", "Directory name to save the checkpoints, absolute path is required [checkpoint]")
+flags.DEFINE_string("data_dir", ABS_PATh + "data", "Root directory of dataset, absolute path is required [data]")
+flags.DEFINE_string("sample_dir", ABS_PATh + "samples", "Directory name to save the image samples, absolute path is required [samples]")
 flags.DEFINE_boolean("train", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
+
+
+# genetic parameteres 
+flags.DEFINE_boolean("give_birth", False, "True for giving birth of new genome")
+flags.DEFINE_integer("matron_id", 0, "True for giving birth of new genome")
+flags.DEFINE_integer("sire_id", 0, "True for giving birth of new genome")
+flags.DEFINE_string("extra", "", "Extra parameteres to be used to give birth")
+flags.DEFINE_integer("ENV", 2, "Environment")
+
+
 FLAGS = flags.FLAGS
+
 
 iS_DEBUG = 0
 # python3 main.py --dataset datasetA1 --input_height=466 --input_width=344 --output_height=466 --output_width=344 --train=True --crop
+# python3 main.py --dataset datasetB --input_height=300 --input_width=300 --output_height=300 --output_width=300 --train=True --crop
+# python3 main.py --dataset datasetB1 --input_height=128 --input_width=128 --output_height=128 --output_width=128 --train=False --crop=False --give_birth=True --generate_test_images=100
 
 def main(_):
   pp.pprint(flags.FLAGS.__flags)
@@ -81,7 +98,8 @@ def main(_):
           crop=FLAGS.crop,
           checkpoint_dir=FLAGS.checkpoint_dir,
           sample_dir=FLAGS.sample_dir,
-          data_dir=FLAGS.data_dir)
+          data_dir=FLAGS.data_dir, 
+          is_give_birth=FLAGS.give_birth)
 
     show_all_variables()
 
@@ -99,9 +117,26 @@ def main(_):
     #                 [dcgan.h4_w, dcgan.h4_b, None])
 
     # Below is codes for visualization
-    if iS_DEBUG == 0:
+    if not FLAGS.give_birth and iS_DEBUG == 0:
       OPTION = 1
       visualize(sess, dcgan, FLAGS, OPTION)
+
+
+    # give birth(genetic), create image as in test mode
+    if FLAGS.give_birth:
+      res = {}
+      res["type"] = "success"
+      res["msg"] = ""
+
+      OPTION = 1
+      loop_size = 100
+      if FLAGS.ENV >= 2:
+        loop_size = 1
+
+      for idx in np.arange(0, loop_size, 1):
+        res = dcgan.giveBirth(sess, dcgan, FLAGS, OPTION)  
+
+      print(res)
 
 if __name__ == '__main__':
   tf.app.run()
