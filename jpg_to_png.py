@@ -17,8 +17,7 @@ def convert( path ):
             print('here 2')
 
             im = Image.open(path+item)
-            rgb_im = im.convert('RGB')
-            rgb_im.save(path+item+'.jpg')
+            im.save(path+item+'.png')
 
 
             print('here 3')
