@@ -2,7 +2,7 @@
 from PIL import Image
 import os, sys
 
-path = "./data/datasetA1/"
+path = "./data/datasetB2/"
 dirs = os.listdir( path )
 
 def resize():
@@ -17,7 +17,7 @@ def resize():
             print('here 2')
             im = Image.open(path+item)
             f, e = os.path.splitext(path+item)
-            imResize = im.resize((768,768), Image.ANTIALIAS)
+            imResize = im.resize((128,128), Image.ANTIALIAS)
             imResize.save(f + ' resized.jpg', 'JPEG', quality=90)
 
             print('here 3')
