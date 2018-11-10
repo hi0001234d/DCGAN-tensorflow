@@ -22,7 +22,7 @@ flags.DEFINE_integer("input_width", None, "The size of image to use (will be cen
 flags.DEFINE_integer("output_height", 64, "The size of the output images to produce [64]")
 flags.DEFINE_integer("output_width", None, "The size of the output images to produce. If None, same value as output_height [None]")
 flags.DEFINE_string("dataset", "celebA", "The name of dataset [celebA, mnist, lsun]")
-flags.DEFINE_string("input_fname_pattern", "*.jpg", "Glob pattern of filename of input images [*]")
+flags.DEFINE_string("input_fname_pattern", "*.png", "Glob pattern of filename of input images [*]")
 flags.DEFINE_string("checkpoint_dir", ABS_PATh + "checkpoint", "Directory name to save the checkpoints, absolute path is required [checkpoint]")
 flags.DEFINE_string("data_dir", ABS_PATh + "data", "Root directory of dataset, absolute path is required [data]")
 flags.DEFINE_string("sample_dir", ABS_PATh + "samples", "Directory name to save the image samples, absolute path is required [samples]")
@@ -31,7 +31,7 @@ flags.DEFINE_boolean("crop", False, "True for training, False for testing [False
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
 flags.DEFINE_boolean("is_custom_mnist", False, "is_custom_mnist. [False]")  #note that you can simply put your image classes folders in dataset folder which i'd called custom mnist of course it can be any labelled image dataset
-
+flags.DEFINE_string("load_checkpoint", '', "Load a particular checkpoint ['']")
 
 # genetic parameteres 
 flags.DEFINE_boolean("give_birth", False, "True for giving birth of new genome")
@@ -39,6 +39,7 @@ flags.DEFINE_integer("matron_id", 0, "True for giving birth of new genome")
 flags.DEFINE_integer("sire_id", 0, "True for giving birth of new genome")
 flags.DEFINE_string("extra", "", "Extra parameteres to be used to give birth")
 flags.DEFINE_integer("ENV", 2, "Environment")
+flags.DEFINE_boolean("is_sub_process", False, "True for sub process")
 
 
 FLAGS = flags.FLAGS
@@ -103,15 +104,17 @@ def main(_):
           sample_dir=FLAGS.sample_dir,
           data_dir=FLAGS.data_dir, 
           is_give_birth=FLAGS.give_birth,
-          is_custom_mnist=FLAGS.is_custom_mnist)
+          is_custom_mnist=FLAGS.is_custom_mnist, 
+          load_checkpoint=FLAGS.load_checkpoint)
 
     show_all_variables()
 
     if FLAGS.train:
       dcgan.train(FLAGS)
     else:
-      if not dcgan.load(FLAGS.checkpoint_dir)[0]:
-        raise Exception("[!] Train a model first, then run test mode")
+      if FLAGS.is_sub_process:
+        if not dcgan.load(FLAGS.checkpoint_dir)[0]:
+          raise Exception("[!] Train a model first, then run test mode")
       
 
     # to_json("./web/js/layers.js", [dcgan.h0_w, dcgan.h0_b, dcgan.g_bn0],
@@ -133,12 +136,17 @@ def main(_):
       res["msg"] = ""
 
       OPTION = 1
-      loop_size = 100
-      if FLAGS.ENV >= 2:
-        loop_size = 1
+      if FLAGS.is_sub_process:
+        loop_size = 100
+        if FLAGS.ENV >= 2:
+          loop_size = 1
 
-      for idx in np.arange(0, loop_size, 1):
-        res = dcgan.giveBirth(sess, dcgan, FLAGS, OPTION)  
+        for idx in np.arange(0, loop_size, 1):
+          res = dcgan.giveBirth(sess, dcgan, FLAGS, OPTION)
+      else:
+          from __genetic_layer import genetic_layer
+          genetic_layer_obj = genetic_layer()
+          res = genetic_layer_obj.main(sess, dcgan, FLAGS, OPTION)
 
       print(res)
 
