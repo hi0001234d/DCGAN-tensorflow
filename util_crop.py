@@ -2,11 +2,28 @@
 from PIL import Image
 import os, sys
 
-#paths = [ "./data/datasetB4/Download/1/", "./data/datasetB4/Download/2/", "./data/datasetB4/Download/3/", "./data/datasetB4/Download/4/", "./data/datasetB4/Download/5/", "./data/datasetB4/Download/6/", "./data/datasetB4/Download/7/", "./data/datasetB4/Download/8/", "./data/datasetB4/Download/9/", "./data/datasetB4/Download/10/" ]
-paths = [ "./data/arms/" ]
+import tensorflow as tf
+
+#use absolute paths
+ABS_PATh = os.path.dirname(os.path.abspath(__file__)) + "/"
+
+
+flags = tf.app.flags
+flags.DEFINE_string("dir_to_process", "", "dir_to_process")
+flags.DEFINE_string("crop_top", "", "crop_top")
+flags.DEFINE_string("crop_left", "", "crop_top")
+flags.DEFINE_string("crop_width", "", "crop_top")
+flags.DEFINE_string("crop_height", "", "crop_top")
+FLAGS = flags.FLAGS
+
+if FLAGS.dir_to_process == "":
+    paths = []  #specify static here
+else:
+    paths = [ "./data/"+FLAGS.dir_to_process+"/" ]
 
 def resize( path ):
-    for item in dirs:
+    items = os.listdir( path )
+    for item in items:
         print(item)
         if item == '.DS_Store':
             continue
@@ -17,7 +34,7 @@ def resize( path ):
             print('here 2')
             im = Image.open(path+item)
             f, e = os.path.splitext(path+item)
-            imCrped = im.crop((3,150,703,850))
+            imCrped = im.crop((int(FLAGS.crop_left), int(FLAGS.crop_top), int(FLAGS.crop_left)+int(FLAGS.crop_width), int(FLAGS.crop_top)+int(FLAGS.crop_height)))
             imCrped.save(f + '.' + e)
 
             print('here 3')
@@ -25,5 +42,4 @@ def resize( path ):
             os.remove(path+item)
 
 for path in paths:
-    dirs = os.listdir( path )
     resize( path )

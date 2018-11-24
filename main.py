@@ -39,7 +39,7 @@ flags.DEFINE_integer("matron_id", 0, "True for giving birth of new genome")
 flags.DEFINE_integer("sire_id", 0, "True for giving birth of new genome")
 flags.DEFINE_string("extra", "", "Extra parameteres to be used to give birth")
 flags.DEFINE_integer("ENV", 2, "Environment")
-flags.DEFINE_boolean("is_sub_process", False, "True for sub process")
+flags.DEFINE_boolean("is_sub_process", True, "True for sub process means training or testing process")
 
 
 FLAGS = flags.FLAGS
@@ -69,7 +69,7 @@ def main(_):
   run_config.gpu_options.allow_growth=True
 
   with tf.Session(config=run_config) as sess:
-    if FLAGS.dataset == 'mnist':
+    if FLAGS.dataset == 'mnist' and FLAGS.is_sub_process:
       dcgan = DCGAN(
           sess,
           input_width=FLAGS.input_width,
@@ -87,7 +87,7 @@ def main(_):
           sample_dir=FLAGS.sample_dir,
           data_dir=FLAGS.data_dir,
           is_custom_mnist=FLAGS.is_custom_mnist)
-    else:
+    elif FLAGS.is_sub_process:
       dcgan = DCGAN(
           sess,
           input_width=FLAGS.input_width,
@@ -106,6 +106,8 @@ def main(_):
           is_give_birth=FLAGS.give_birth,
           is_custom_mnist=FLAGS.is_custom_mnist, 
           load_checkpoint=FLAGS.load_checkpoint)
+    else:
+      dcgan = None
 
     show_all_variables()
 
@@ -148,6 +150,7 @@ def main(_):
           genetic_layer_obj = genetic_layer()
           res = genetic_layer_obj.main(sess, dcgan, FLAGS, OPTION)
 
+      print("final res")
       print(res)
 
 if __name__ == '__main__':
