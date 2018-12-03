@@ -2,7 +2,7 @@ import scipy.misc
 import os
 import numpy as np
 
-from ___model_genetic import DCGAN
+from model_genetic import DCGAN
 from utils import pp, visualize, to_json, show_all_variables
 
 import tensorflow as tf
