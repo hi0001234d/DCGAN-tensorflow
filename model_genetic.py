@@ -10,7 +10,7 @@ from six.moves import xrange
 from ops import *
 from utils import *
 
-# implement your business logic of genetic algorithm and import that here
+# implement your own app logic of genetic algorithm and import that here
 from __genetic_layer import genetic_layer
 
 ABS_PATh = os.path.dirname(os.path.abspath(__file__)) + "/"
