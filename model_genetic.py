@@ -124,6 +124,9 @@ class DCGAN(object):
 
     inputs = self.inputs
 
+    #added noise to prevent overfitting of discriminator 
+    inputs = inputs + tf.random_normal(shape=tf.shape(inputs), mean=0.0, stddev=0.1, dtype=tf.float32)
+
     self.z = tf.placeholder(
       tf.float32, [None, self.z_dim], name='z')
     self.z_sum = histogram_summary("z", self.z)
