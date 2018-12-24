@@ -30,6 +30,7 @@ flags.DEFINE_boolean("train", False, "True for training, False for testing [Fals
 flags.DEFINE_boolean("crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
+flags.DEFINE_integer("is_save_individual_test_images", False, ". [False]")
 flags.DEFINE_boolean("is_custom_mnist", False, "is_custom_mnist. [False]")  #note that you can simply put your image classes folders in dataset folder which i'd called custom mnist of course it can be any labelled image dataset
 flags.DEFINE_string("load_checkpoint", '', "Load a particular checkpoint ['']")
 
@@ -46,7 +47,7 @@ FLAGS = flags.FLAGS
 
 
 iS_DEBUG = 0
-# python3 main.py --dataset datasetA1 --input_height=466 --input_width=344 --output_height=466 --output_width=344 --train=True --crop
+# python3 main.py --dataset datasetA1 --input_height=466 --input_width=344 --output_height=466 --output_width=344 --train=True --crop --epoch --batch_size 
 # python3 main.py --dataset datasetB --input_height=300 --input_width=300 --output_height=300 --output_width=300 --train=True --crop
 # python3 main.py --dataset datasetB1 --input_height=128 --input_width=128 --output_height=128 --output_width=128 --train=False --crop=False --give_birth=True --generate_test_images=100
 # python3 main.py --dataset mnist --input_height=128 --input_width=128 --output_height=128 --output_width=128 --train=True --crop --dataset=mnist --is_custom_mnist=True

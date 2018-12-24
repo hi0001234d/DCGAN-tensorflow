@@ -196,7 +196,12 @@ def visualize(sess, dcgan, config, option):
       else:
         samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
 
-      save_images(samples, [image_frame_dim, image_frame_dim], ABS_PATh+'samples/test_arange_%s.png' % (idx))
+      if config.is_save_individual_test_images == False:  
+        save_images(samples, [image_frame_dim, image_frame_dim], ABS_PATh+'samples/test_arange_%s.png' % (idx))
+      else:
+        for idx1 in range(config.batch_size):
+          save_images(samples[idx1], image_manifold_size(samples.shape[0]), ABS_PATh+'samples/test_arange_%s_%s.png' % (idx, idx1))
+
   elif option == 2:
     values = np.arange(0, 1, 1./config.batch_size)
     for idx in [random.randint(0, dcgan.z_dim - 1) for _ in xrange(dcgan.z_dim)]:
@@ -250,5 +255,11 @@ def visualize(sess, dcgan, config, option):
 def image_manifold_size(num_images):
   manifold_h = int(np.floor(np.sqrt(num_images)))
   manifold_w = int(np.ceil(np.sqrt(num_images)))
+  
+  print( "image_manifold_size assert" )
+  print( manifold_h )
+  print( manifold_w )
+  print( num_images )
   assert manifold_h * manifold_w == num_images
+  
   return manifold_h, manifold_w
