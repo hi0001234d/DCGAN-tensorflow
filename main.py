@@ -30,7 +30,7 @@ flags.DEFINE_boolean("train", False, "True for training, False for testing [Fals
 flags.DEFINE_boolean("crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
-flags.DEFINE_integer("is_save_individual_test_images", False, ". [False]")
+flags.DEFINE_boolean("is_save_individual_test_images", False, ". [False]")
 flags.DEFINE_boolean("is_custom_mnist", False, "is_custom_mnist. [False]")  #note that you can simply put your image classes folders in dataset folder which i'd called custom mnist of course it can be any labelled image dataset
 flags.DEFINE_string("load_checkpoint", '', "Load a particular checkpoint ['']")
 
